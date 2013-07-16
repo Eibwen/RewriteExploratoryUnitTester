@@ -45,6 +45,7 @@
     <Compile Include="Containers\RewriteRule.cs" />
     <Compile Include="Containers\RewriteRuleSet.cs" />
     <Compile Include="DataSource\OptionsFactory.cs" />
+    <Compile Include="DataSource\RedirectLineType.cs" />
     <Compile Include="DataSource\RedirectStatus.cs" />
     <Compile Include="DataSource\RuleOptions.cs" />
     <Compile Include="DataSource\SampleValues.cs" />

@@ -29,11 +29,12 @@ namespace RewriteExploratoryUnitTester.HelperClasses
 
         public void TestUrl(string url, bool outputAllMatching = false)
         {
-            var matchesRuleSets = RulesSets.Where(r => r.ProcessConditions(url));
+            var data = new RedirectData(url);
+            var matchesRuleSets = RulesSets.Where(r => r.ProcessConditions(ref data));
 
             foreach (var rule in matchesRuleSets)
             {
-                RedirectData data = rule.ProcessRules(url);
+                data = rule.ProcessRules(data);
                 if (!outputAllMatching || data.Status != RedirectStatus.Continue)
                     break;
             }

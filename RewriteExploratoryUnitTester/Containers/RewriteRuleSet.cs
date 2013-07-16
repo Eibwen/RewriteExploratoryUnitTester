@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using RewriteExploratoryUnitTester.DataSource;
 
 namespace RewriteExploratoryUnitTester.Containers
 {
@@ -14,13 +15,13 @@ namespace RewriteExploratoryUnitTester.Containers
             RewriteRuleSet rules = new RewriteRuleSet();
             foreach (var c in conf)
             {
-                if (c == null)
+                if (c == null || c.LineType == RedirectLineType.Ignore)
                 {
                     //Ignored line... might be alright
                     continue;
                 }
 
-                if (c.IsCondition)
+                if (c.LineType == RedirectLineType.Condition)
                 {
                     if (rules.Rules != null)
                     {
@@ -32,7 +33,7 @@ namespace RewriteExploratoryUnitTester.Containers
 
                     rules.Conditions.Add((RewriteCondition)c);
                 }
-                else if (c.IsRule)
+                else if (c.LineType == RedirectLineType.Rule)
                 {
                     if (rules.Conditions == null)
                     {
@@ -52,14 +53,31 @@ namespace RewriteExploratoryUnitTester.Containers
         public List<RewriteCondition> Conditions { get; set; }
         public List<RewriteRule> Rules { get; set; }
 
-        public bool ProcessConditions(string url)
+        public bool ProcessConditions(ref RedirectData data)
         {
-            throw new NotImplementedException();
-            //return Conditions.All(c => c.Process(url));
+            foreach (var c in Conditions)
+            {
+                if (!c.MatchesCondition(ref data)) return false;
+            }
+            return true;
         }
-        public RedirectData ProcessRules(string url)
+
+        public RedirectData ProcessRules(RedirectData data)
         {
-            throw new NotImplementedException();
+            foreach (var rule in Rules)
+            {
+                data = rule.ProcessRule(data);
+                switch (data.Status)
+                {
+                    case RedirectStatus.Continue:
+                        continue;
+                    case RedirectStatus.Redirected:
+                        break;
+                    default:
+                        throw new Exception("Unknown RedirectStatus... code needs to be updated");
+                }
+            }
+            return data;
         }
     }
 }

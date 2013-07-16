@@ -9,6 +9,11 @@ namespace RewriteExploratoryUnitTester.Containers
 {
     public class RedirectData
     {
+        public RedirectData(string url)
+        {
+            OriginalUrl = url;
+        }
+
         public string OriginalUrl { get; set; }
 
         public string ProcessedUrl { get; set; }

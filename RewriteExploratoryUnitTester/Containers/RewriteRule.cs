@@ -28,16 +28,58 @@ namespace RewriteExploratoryUnitTester.Containers
         public string ReplacePattern { get; set; }
         public RuleOptions Options { get; set; }
 
+        public RedirectData ProcessRule(RedirectData data)
+        {
+            var m = Regex.Match(data.OriginalUrl, MatchPattern);
+            if (m.Success)
+            {
+                data.RuleMatchGroups = m.Groups.Cast<Match>()
+                                        .Select(a => a.Value).ToList();
 
-        public bool WillProcess(RedirectData data)
-        {
-            return true;
+                data.ProcessedUrl = BuildOutputUrl(data);
+
+                if ((Options & RuleOptions.FINISHED) > 0)
+                {
+                    data.Status = RedirectStatus.Redirected;
+                }
+            }
+            return data;
         }
-        public RedirectData Process(RedirectData data)
+
+        public string BuildOutputUrl(RedirectData data)
         {
-            throw new NotImplementedException();
+            var ruleMatches = data.RuleMatchGroups ?? new List<string>();
+            var conditionMatches = data.ConditionMatchGroups ?? new List<string>();
+
+            return Regex.Replace(ReplacePattern, @"($\d|%\d|$$\d\d|%%\d\d)", match => Evaluator(match, ruleMatches, conditionMatches));
         }
-        public bool IsCondition { get { return false; } }
-        public bool IsRule { get { return true; } }
+
+        private string Evaluator(Match match, List<string> ruleMatches, List<string> conditionMatches)
+        {
+            var m = match.Value;
+            if (m[0] == '$')
+            {
+                m = m.TrimStart('$');
+                var i = Int32.Parse(m);
+
+                if (i < ruleMatches.Count) return ruleMatches[i];
+                return "";
+            }
+            else if (m[0] == '%')
+            {
+                m = m.TrimStart('%');
+                var i = Int32.Parse(m);
+
+                if (i < conditionMatches.Count) return conditionMatches[i];
+                return "";
+            }
+            return m;
+        }
+
+
+        public RedirectLineType LineType
+        {
+            get { return RedirectLineType.Rule; }
+        }
     }
 }

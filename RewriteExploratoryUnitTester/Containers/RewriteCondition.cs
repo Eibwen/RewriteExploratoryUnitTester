@@ -30,27 +30,21 @@ namespace RewriteExploratoryUnitTester.Containers
         public string MatchPattern { get; set; }
 
 
-        public bool WillProcess(RedirectData data)
+
+        public bool MatchesCondition(ref RedirectData data)
         {
-            throw new NotImplementedException();
+            var m = Regex.Match(data.OriginalUrl, MatchPattern);
+            if (m.Success)
+            {
+                data.ConditionMatchGroups = m.Groups.Cast<Match>()
+                                             .Select(a => a.Value).ToList();
+            }
+            return m.Success;
         }
-        public RedirectData Process(RedirectData data)
+
+        public RedirectLineType LineType
         {
-            //		for (int i = 0; i < Rules.Count; ++i)
-            //		{
-            //			if (data.Status == RedirectStatus.Continue)
-            //			{
-            //				data = Rules[i].Process(data);
-            //			}
-            //			if (data.Status == RedirectStatus.Redirected)
-            //			{
-            //				break;
-            //			}
-            //		}
-            //		return data;
-            throw new NotImplementedException();
+            get { return RedirectLineType.Condition; }
         }
-        public bool IsCondition { get { return true; } }
-        public bool IsRule { get { return false; } }
     }
 }

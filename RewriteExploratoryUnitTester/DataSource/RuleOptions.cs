@@ -33,5 +33,8 @@ namespace RewriteExploratoryUnitTester.DataSource
         [Text("CL")]
         //Changes the case of substitution result to lower.
         CaseLower = 0x10000000,
+
+
+        FINISHED = LastRule | Redirect301
     }
 }
