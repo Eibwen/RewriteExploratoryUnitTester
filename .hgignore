@@ -1,0 +1,6 @@
+syntax: glob
+*.suo
+packages/*
+syntax: regexp
+^[^/]+/obj/
+^[^/]+/bin/
