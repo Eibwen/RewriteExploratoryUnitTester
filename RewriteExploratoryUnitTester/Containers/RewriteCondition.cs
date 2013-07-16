@@ -11,8 +11,10 @@ namespace RewriteExploratoryUnitTester.Containers
     public class RewriteCondition : IRedirectLine
     {
         static readonly Regex RewriteCondPattern = new Regex(@"^RewriteCond (%\{(?<variable>[^\}]+)\} )?(?<match>[^ ]+)$");
-        public RewriteCondition(string line, ISampleValues values)
+        public RewriteCondition(int lineNumber, string line, ISampleValues values)
         {
+            LineNumber = lineNumber;
+
             _values = values;
 
             var m = RewriteCondPattern.Match(line);
@@ -26,6 +28,8 @@ namespace RewriteExploratoryUnitTester.Containers
 
         readonly ISampleValues _values;
 
+        public int LineNumber { get; set; }
+
         public string Variable { get; set; }
         public string MatchPattern { get; set; }
 
@@ -33,10 +37,13 @@ namespace RewriteExploratoryUnitTester.Containers
 
         public bool MatchesCondition(ref RedirectData data)
         {
-            var m = Regex.Match(data.OriginalUrl, MatchPattern);
+            string testString = data.OriginalUrl.PathAndQuery;
+            if (Variable != null) testString = _values.GetSampleValue(Variable, data);
+
+            var m = Regex.Match(testString, MatchPattern);
             if (m.Success)
             {
-                data.ConditionMatchGroups = m.Groups.Cast<Match>()
+                data.ConditionMatchGroups = m.Groups.Cast<Group>()
                                              .Select(a => a.Value).ToList();
             }
             return m.Success;

@@ -21,13 +21,16 @@ namespace RewriteExploratoryUnitTester.HelperClasses
         {
             using (var sw = new StreamReader(path))
             {
+                var lineNumber = 0;
                 while (!sw.EndOfStream)
                 {
                     var line = sw.ReadLine().Trim();
+                    ++lineNumber;
+
                     if (line.Length > 0
                         && !line.StartsWith("#"))
                     {
-                        yield return _fact.Build(line);
+                        yield return _fact.Build(lineNumber, line);
                     }
                 }
                 //			RewriteCondition lastCondition = null;

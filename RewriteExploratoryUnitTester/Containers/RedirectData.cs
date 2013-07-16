@@ -11,10 +11,29 @@ namespace RewriteExploratoryUnitTester.Containers
     {
         public RedirectData(string url)
         {
-            OriginalUrl = url;
+            OriginalUrl = CleanUrl(url);
         }
 
-        public string OriginalUrl { get; set; }
+//        public static RedirectData Create(string url)
+//        {
+//            var data = new RedirectData();
+//            data.OriginalUrl = CleanUrl(url);
+//            return data;
+//        }
+
+        public virtual Uri CleanUrl(string url)
+        {
+            if (url.StartsWith("http://") || url.StartsWith("https://"))
+            {
+                return new Uri(url);
+            }
+            else
+            {
+                return new Uri("http://" + url);
+            }
+        }
+
+        public Uri OriginalUrl { get; set; }
 
         public string ProcessedUrl { get; set; }
         public RedirectStatus Status { get; set; }
@@ -22,5 +41,11 @@ namespace RewriteExploratoryUnitTester.Containers
         //TODO this goes in a RuleSetMatchData ?
         public List<string> ConditionMatchGroups { get; set; }
         public List<string> RuleMatchGroups { get; set; }
+
+        public RewriteRuleSet RuleSetMatched
+        {
+            get;
+            set;
+        }
     }
 }

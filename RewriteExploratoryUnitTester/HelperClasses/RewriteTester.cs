@@ -27,17 +27,21 @@ namespace RewriteExploratoryUnitTester.HelperClasses
             RulesSets = RewriteRuleSet.BuildRuleSets(conf).ToList();
         }
 
-        public void TestUrl(string url, bool outputAllMatching = false)
+        public RedirectData TestUrl(string url, bool outputAllMatching = false)
         {
+            if (RulesSets == null) throw new Exception("Did you forget to call LoadConfig?");
+
+
             var data = new RedirectData(url);
             var matchesRuleSets = RulesSets.Where(r => r.ProcessConditions(ref data));
 
             foreach (var rule in matchesRuleSets)
             {
                 data = rule.ProcessRules(data);
-                if (!outputAllMatching || data.Status != RedirectStatus.Continue)
+                if (!outputAllMatching && data.Status == RedirectStatus.Redirected)
                     break;
             }
+            return data;
         }
     }
 }

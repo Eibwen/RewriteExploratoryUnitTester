@@ -24,17 +24,17 @@ namespace RewriteExploratoryUnitTester.Processors
 		"RewriteBase"
 	};
 
-        public IRedirectLine Build(string line)
+        public IRedirectLine Build(int lineNumber, string line)
         {
             if (line.StartsWith("RewriteRule")
                 //Someone missed a shift key... only one person, one instance
                 || line.StartsWith("rewriteRule"))
             {
-                return new RewriteRule(line);
+                return new RewriteRule(lineNumber, line);
             }
             else if (line.StartsWith("RewriteCond"))
             {
-                return new RewriteCondition(line, _values);
+                return new RewriteCondition(lineNumber, line, _values);
             }
             else if (IgnoredSettings.Any(x => line.StartsWith(x)))
             {

@@ -11,18 +11,28 @@ namespace RewriteExploratoryUnitTester.Containers
     public class RewriteRule : IRedirectLine
     {
         static readonly Regex RewriteRulePattern = new Regex(@"^[Rr]ewriteRule (?<match>[^ ]+) +(?<replace>[^ ]+)(?: +\[(?<options>[^\]]+)\])?$");
-        public RewriteRule(string line)
+        public RewriteRule(int lineNumber, string line)
         {
+            LineNumber = lineNumber;
+
             var m = RewriteRulePattern.Match(line);
 
             if (!m.Success) throw new Exception("FAIL: '" + line + "'");
 
             //if (lines[0] == "RewriteRule")
-            MatchPattern = m.Groups["match"].Value;
+            MatchPattern = CleanRegexFordotNet(m.Groups["match"].Value);
             ReplacePattern = m.Groups["replace"].Value;
             if (m.Groups["options"].Success)
                 Options = OptionsFactory.BuildOptions(m.Groups["options"].Value);
         }
+
+        public virtual string CleanRegexFordotNet(string regex)
+        {
+            //.Net doesn't support matching lowercase with \u
+            return regex.Replace(@"\u", "");
+        }
+
+        public int LineNumber { get; set; }
 
         public string MatchPattern { get; set; }
         public string ReplacePattern { get; set; }
@@ -30,10 +40,11 @@ namespace RewriteExploratoryUnitTester.Containers
 
         public RedirectData ProcessRule(RedirectData data)
         {
-            var m = Regex.Match(data.OriginalUrl, MatchPattern);
+            //TODO actually this is the OriginalString when condition checks that... or something
+            var m = Regex.Match(data.OriginalUrl.PathAndQuery.TrimStart('/'), MatchPattern);
             if (m.Success)
             {
-                data.RuleMatchGroups = m.Groups.Cast<Match>()
+                data.RuleMatchGroups = m.Groups.Cast<Group>()
                                         .Select(a => a.Value).ToList();
 
                 data.ProcessedUrl = BuildOutputUrl(data);
@@ -51,7 +62,7 @@ namespace RewriteExploratoryUnitTester.Containers
             var ruleMatches = data.RuleMatchGroups ?? new List<string>();
             var conditionMatches = data.ConditionMatchGroups ?? new List<string>();
 
-            return Regex.Replace(ReplacePattern, @"($\d|%\d|$$\d\d|%%\d\d)", match => Evaluator(match, ruleMatches, conditionMatches));
+            return Regex.Replace(ReplacePattern, @"(\$\d|%\d|\$\$\d\d|%%\d\d)", match => Evaluator(match, ruleMatches, conditionMatches));
         }
 
         private string Evaluator(Match match, List<string> ruleMatches, List<string> conditionMatches)

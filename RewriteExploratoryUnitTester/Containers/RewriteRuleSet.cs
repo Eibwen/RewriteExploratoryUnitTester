@@ -57,8 +57,16 @@ namespace RewriteExploratoryUnitTester.Containers
         {
             foreach (var c in Conditions)
             {
-                if (!c.MatchesCondition(ref data)) return false;
+                try
+                {
+                    if (!c.MatchesCondition(ref data)) return false;
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception("Failed processing condition from line: " + c.LineNumber, ex);
+                }
             }
+            data.RuleSetMatched = this;
             return true;
         }
 
@@ -66,15 +74,23 @@ namespace RewriteExploratoryUnitTester.Containers
         {
             foreach (var rule in Rules)
             {
-                data = rule.ProcessRule(data);
-                switch (data.Status)
+                try
                 {
-                    case RedirectStatus.Continue:
-                        continue;
-                    case RedirectStatus.Redirected:
-                        break;
-                    default:
-                        throw new Exception("Unknown RedirectStatus... code needs to be updated");
+                    data = rule.ProcessRule(data);
+                    switch (data.Status)
+                    {
+                        case RedirectStatus.NotProcessed:
+                        case RedirectStatus.Continue:
+                            continue;
+                        case RedirectStatus.Redirected:
+                            break;
+                        default:
+                            throw new Exception("Unknown RedirectStatus... code needs to be updated: " + data.Status.ToString());
+                    }
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception("Failed processing rule from line: " + rule.LineNumber, ex);
                 }
             }
             return data;
