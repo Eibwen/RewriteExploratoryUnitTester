@@ -5,6 +5,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using RewriteExploratoryUnitTester.DataSource;
+using RewriteExploratoryUnitTester.Extensions;
 
 namespace RewriteExploratoryUnitTester.Containers
 {
@@ -41,7 +42,7 @@ namespace RewriteExploratoryUnitTester.Containers
         public RedirectData ProcessRule(RedirectData data)
         {
             //TODO actually this is the OriginalString when condition checks that... or something
-            var m = Regex.Match(data.OriginalUrl.PathAndQuery.TrimStart('/'), MatchPattern);
+            var m = Regex.Match(data.OriginalUrl.PathAndQuery, MatchPattern, Options_Regex());
             if (m.Success)
             {
                 data.RuleMatchGroups = m.Groups.Cast<Group>()
@@ -49,7 +50,8 @@ namespace RewriteExploratoryUnitTester.Containers
 
                 data.ProcessedUrl = BuildOutputUrl(data);
 
-                if ((Options & RuleOptions.FINISHED) > 0)
+                if ((Options & RuleOptions.FINISHED) > 0
+                    && data.OriginalUrl.OriginalString != data.ProcessedUrl)
                 {
                     data.Status = RedirectStatus.Redirected;
                 }
@@ -62,7 +64,30 @@ namespace RewriteExploratoryUnitTester.Containers
             var ruleMatches = data.RuleMatchGroups ?? new List<string>();
             var conditionMatches = data.ConditionMatchGroups ?? new List<string>();
 
-            return Regex.Replace(ReplacePattern, @"(\$\d|%\d|\$\$\d\d|%%\d\d)", match => Evaluator(match, ruleMatches, conditionMatches));
+            var processedUrl = Regex.Replace(ReplacePattern, @"(\$\d|%\d|\$\$\d\d|%%\d\d)", match => Evaluator(match, ruleMatches, conditionMatches));
+            return Options_PostProcessing(processedUrl);
+        }
+
+        private string Options_PostProcessing(string processedUrl)
+        {
+            var outputString = processedUrl;
+
+            if (Options.HasFlags(RuleOptions.CaseLower))
+            {
+                outputString = outputString.ToLowerInvariant();
+            }
+
+            return outputString;
+        }
+
+        private RegexOptions Options_Regex()
+        {
+            var opts = RegexOptions.None;
+            if (Options.HasFlags(RuleOptions.NoCase))
+            {
+                opts |= RegexOptions.IgnoreCase;
+            }
+            return opts;
         }
 
         private string Evaluator(Match match, List<string> ruleMatches, List<string> conditionMatches)

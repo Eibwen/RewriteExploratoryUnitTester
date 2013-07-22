@@ -16,16 +16,19 @@ namespace RewriteExploratoryUnitTester.Processors
             _values = values;
         }
 
-        List<string> IgnoredSettings = new List<string>
-	{
-		"RewriteEngine",
-		"RewriteCompatibility2",
-		"RepeatLimit",
-		"RewriteBase"
-	};
+        private List<string> IgnoredSettings = new List<string>
+            {
+                "#",
+                "RewriteEngine",
+                "RewriteCompatibility2",
+                "RepeatLimit",
+                "RewriteBase"
+            };
 
         public IRedirectLine Build(int lineNumber, string line)
         {
+            if (string.IsNullOrEmpty(line)) return null;
+
             if (line.StartsWith("RewriteRule")
                 //Someone missed a shift key... only one person, one instance
                 || line.StartsWith("rewriteRule"))

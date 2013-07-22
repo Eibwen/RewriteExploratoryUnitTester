@@ -3,6 +3,8 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RewriteExploratoryUnitTester", "RewriteExploratoryUnitTester\RewriteExploratoryUnitTester.csproj", "{281D82A8-0954-4635-8984-579199691945}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RewriteExploratoryUnitTesterTests", "RewriteExploratoryUnitTesterTests\RewriteExploratoryUnitTesterTests.csproj", "{B4D0D8C9-3466-46E2-B01B-5CB67AAFEF68}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -13,6 +15,10 @@ Global
 		{281D82A8-0954-4635-8984-579199691945}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{281D82A8-0954-4635-8984-579199691945}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{281D82A8-0954-4635-8984-579199691945}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B4D0D8C9-3466-46E2-B01B-5CB67AAFEF68}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B4D0D8C9-3466-46E2-B01B-5CB67AAFEF68}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B4D0D8C9-3466-46E2-B01B-5CB67AAFEF68}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B4D0D8C9-3466-46E2-B01B-5CB67AAFEF68}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

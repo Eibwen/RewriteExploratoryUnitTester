@@ -49,6 +49,7 @@
     <Compile Include="DataSource\RedirectStatus.cs" />
     <Compile Include="DataSource\RuleOptions.cs" />
     <Compile Include="DataSource\SampleValues.cs" />
+    <Compile Include="Extensions\EnumExtensions.cs" />
     <Compile Include="Extensions\TextAttribute.cs" />
     <Compile Include="Extensions\MemberInfoExtensions.cs" />
     <Compile Include="HelperClasses\RewriteReader.cs" />

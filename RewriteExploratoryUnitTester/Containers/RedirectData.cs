@@ -9,6 +9,8 @@ namespace RewriteExploratoryUnitTester.Containers
 {
     public class RedirectData
     {
+        private string _processedUrl;
+
         public RedirectData(string url)
         {
             OriginalUrl = CleanUrl(url);
@@ -35,7 +37,19 @@ namespace RewriteExploratoryUnitTester.Containers
 
         public Uri OriginalUrl { get; set; }
 
-        public string ProcessedUrl { get; set; }
+        public string ProcessedUrl
+        {
+            get
+            {
+                if (_processedUrl == null) return OriginalUrl.OriginalString;
+
+                return Uri.IsWellFormedUriString(_processedUrl, UriKind.Absolute)
+                    ? _processedUrl
+                    : new Uri(OriginalUrl, _processedUrl).ToString();
+            }
+            set { _processedUrl = value; }
+        }
+
         public RedirectStatus Status { get; set; }
 
         //TODO this goes in a RuleSetMatchData ?

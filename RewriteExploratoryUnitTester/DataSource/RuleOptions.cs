@@ -31,10 +31,10 @@ namespace RewriteExploratoryUnitTester.DataSource
         ///Log the URL as it was originally requested and not as the URL was rewritten.
         UnmangleLog = 0x01000000,
         [Text("CL")]
-        //Changes the case of substitution result to lower.
+        ///Changes the case of substitution result to lower.
         CaseLower = 0x10000000,
 
 
-        FINISHED = LastRule | Redirect301
+        FINISHED = LastRule | Redirect301 | Forbidden
     }
 }
