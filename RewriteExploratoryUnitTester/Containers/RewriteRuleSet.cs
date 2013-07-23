@@ -35,10 +35,6 @@ namespace RewriteExploratoryUnitTester.Containers
                 }
                 else if (c.LineType == RedirectLineType.Rule)
                 {
-                    if (rules.Conditions == null)
-                    {
-                        throw new Exception("Rule without conditions... wtf, this isn't allowed!...?");
-                    }
                     //Actually only one rule* per Condition
                     //TODO or other types: RewriteRule, RewriteHeader or RewriteProxy
                     if (rules.Rules != null)
