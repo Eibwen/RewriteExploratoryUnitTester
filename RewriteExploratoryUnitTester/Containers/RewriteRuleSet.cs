@@ -39,6 +39,14 @@ namespace RewriteExploratoryUnitTester.Containers
                     {
                         throw new Exception("Rule without conditions... wtf, this isn't allowed!...?");
                     }
+                    //Actually only one rule* per Condition
+                    //TODO or other types: RewriteRule, RewriteHeader or RewriteProxy
+                    if (rules.Rules != null)
+                    {
+                        //Have condition and rules, move onto a new ruleset
+                        yield return rules;
+                        rules = new RewriteRuleSet();
+                    }
                     if (rules.Rules == null) rules.Rules = new List<RewriteRule>();
 
                     rules.Rules.Add((RewriteRule)c);
@@ -55,6 +63,9 @@ namespace RewriteExploratoryUnitTester.Containers
 
         public bool ProcessConditions(ref RedirectData data)
         {
+            //Default to true
+            if (Conditions == null) return true;
+
             foreach (var c in Conditions)
             {
                 try

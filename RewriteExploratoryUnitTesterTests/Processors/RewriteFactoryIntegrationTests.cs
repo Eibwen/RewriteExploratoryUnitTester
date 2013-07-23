@@ -12,7 +12,7 @@ using RewriteExploratoryUnitTester.Processors;
 namespace RewriteExploratoryUnitTesterTests.Processors
 {
     [TestFixture]
-    internal class RewriteFactoryIntegrationTests
+    class RewriteFactoryIntegrationTests
     {
         [TestCase("http://movers.uship.com", true, true, "http://movers.uship.com/")]
         [TestCase("http://movers.uship.com?debug=1", true, true, "http://movers.uship.com/?debug=1")]
@@ -22,6 +22,7 @@ namespace RewriteExploratoryUnitTesterTests.Processors
         public void Single_ruleset_should_manually_work_as_expected(string originalUrl, bool matchesCond, bool matchesRule, string expectedUrl)
         {
             //Arrange
+            //TODO use structure map for getting the instance???:
             var samples = new RandomSampleValues();
             var factory = new RewriteFactory(samples);
             string[] lines =
@@ -78,30 +79,7 @@ namespace RewriteExploratoryUnitTesterTests.Processors
             var ruleSet = RewriteRuleSet.BuildRuleSets(redirects);
             var redirectData = new RedirectData(originalUrl);
 
-            //Act
-            var matchingSets = ruleSet.Where(r => r.ProcessConditions(ref redirectData));
-            var rewriteRuleSets = matchingSets as IList<RewriteRuleSet> ?? matchingSets.ToList();
-            redirectData = rewriteRuleSets.First().ProcessRules(redirectData);
-
-            //Assert
-            if (matchesCond)
-            {
-                rewriteRuleSets.Count().Should().Be(1);
-
-                if (matchesRule)
-                {
-                    redirectData.Status.Should().NotBe(RedirectStatus.NotProcessed);
-                    redirectData.ProcessedUrl.Should().Be(expectedUrl);
-                }
-                else
-                {
-                    redirectData.Status.Should().Be(RedirectStatus.NotProcessed);
-                }
-            }
-            else
-            {
-                rewriteRuleSets.Count().Should().Be(0);
-            }
+            TestConditions(matchesCond, matchesRule, expectedUrl, ruleSet, redirectData);
         }
 
         [TestCase("http://vehicles.uship.com/state", true, true, "http://www.uship.com/vehicles/state")]
@@ -144,6 +122,11 @@ namespace RewriteExploratoryUnitTesterTests.Processors
             var ruleSet = RewriteRuleSet.BuildRuleSets(redirects);
             var redirectData = new RedirectData(originalUrl);
 
+            TestConditions(matchesCond, matchesRule, expectedUrl, ruleSet, redirectData);
+        }
+
+        private static void TestConditions(bool matchesCond, bool matchesRule, string expectedUrl, IEnumerable<RewriteRuleSet> ruleSet, RedirectData redirectData)
+        {
             //Act
             var matchingSets = ruleSet.Where(r => r.ProcessConditions(ref redirectData));
             var rewriteRuleSets = matchingSets as IList<RewriteRuleSet> ?? matchingSets.ToList();
@@ -168,6 +151,33 @@ namespace RewriteExploratoryUnitTesterTests.Processors
             {
                 rewriteRuleSets.Count().Should().Be(0);
             }
+        }
+
+        [TestCase("http://localhost/pricing/vehicles/cars-and-light-trucks", true, true, "http://localhost/listingindex/PricingCommodity.aspx?c=vehicles&page=cars-and-light-trucks")]
+        [TestCase("http://www.uship.com/pricing/vehicles/cars-and-light-trucks", true, true, "http://www.uship.com/listingindex/PricingCommodity.aspx?c=vehicles&page=cars-and-light-trucks")]
+        public void Pricing_index_page_urls(string originalUrl, bool matchesCond, bool matchesRule, string expectedUrl)
+        {
+            //Arrange
+            var samples = new RandomSampleValues();
+            var factory = new RewriteFactory(samples);
+            string[] lines =
+                {
+                    @"RewriteCond %{HTTP:Host} ^directory[2]?\.uship\.com$",
+                    @"RewriteRule ^/tips/showtip.aspx(.*)$ http://www.uship.com/tips/showtip.aspx$1 [NC,R=301]",
+                    @"",
+                    @"# ...",
+                    @"",
+                    @"# Listing Index",
+                    @"RewriteRule ^/pricing/((?:[a-z]|[-])+)/((?:[a-z]|[-])+)(?:/page/([0-9]+))? /listingindex/PricingCommodity.aspx?c=$1&c2=$2&page=$3 [NC,L]",
+                    @"RewriteRule ^/pricing/((?:[a-z]|[-])+)(?:/page/([0-9]+))? /listingindex/PricingCommodity.aspx?c=$1&page=$2 [NC,L]",
+                    @"RewriteRule ^/pricing/?$ /listingindex/?c=4&c2=79 [NC,L]"
+                };
+            var lineNum = 1;
+            var redirects = lines.Select(l => factory.Build(lineNum++, l));
+            var ruleSet = RewriteRuleSet.BuildRuleSets(redirects);
+            var redirectData = new RedirectData(originalUrl);
+
+            TestConditions(matchesCond, matchesRule, expectedUrl, ruleSet, redirectData);
         }
     }
 }

@@ -1,0 +1,9 @@
+﻿GUI will have:
+1. SampleValue options
+2. Hostname regex (.*\.uship\.com)  (support glob too??}
+3. Source Url
+4. List of redirects that happened
+5. Final url after all internal redirects and 301 redirects
+
+1. Find all matches, to determine if one is catching it before it should
+

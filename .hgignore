@@ -1,6 +1,7 @@
 syntax: glob
 *.suo
 packages/*
+*.DotSettings.user
 syntax: regexp
 ^[^/]+/obj/
 ^[^/]+/bin/
