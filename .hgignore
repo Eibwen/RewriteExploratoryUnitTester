@@ -1,6 +1,7 @@
 syntax: glob
 *.suo
 *.DotSettings.user
+.git
 syntax: regexp
 ^[^/]+/obj/
 ^[^/]+/bin/
