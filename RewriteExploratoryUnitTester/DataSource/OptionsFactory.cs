@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using RewriteExploratoryUnitTester.Extensions;
 
 namespace RewriteExploratoryUnitTester.DataSource
@@ -34,7 +32,7 @@ namespace RewriteExploratoryUnitTester.DataSource
                 else
                 {
                     //conf.Dump();
-                    throw new Exception("MISSING OPTION: " + o);
+                    throw new Exception("UNKNOWN OPTION: " + o);
                 }
             }
 
