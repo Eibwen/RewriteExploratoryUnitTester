@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using RewriteExploratoryUnitTester.DataSource;
 using RewriteExploratoryUnitTester.Extensions;
 
@@ -77,7 +75,7 @@ namespace RewriteExploratoryUnitTester.Containers
                 outputString = outputString.ToLowerInvariant();
             }
 
-            return outputString;
+            return Regex.Unescape(outputString);
         }
 
         private RegexOptions Options_Regex()

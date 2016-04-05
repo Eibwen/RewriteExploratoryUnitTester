@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using FluentAssertions;
 using NUnit.Framework;
 using RewriteExploratoryUnitTester.Containers;
@@ -187,6 +184,28 @@ namespace RewriteExploratoryUnitTesterTests.Processors
             var redirectData = new RedirectData(originalUrl);
 
             TestConditions(matchesCond, matchesRule, 3, expectedUrl, ruleSet, redirectData);
+        }
+
+        [TestCase("http://dev.uship.com/ltl-freight/", true, true, "https://dev.uship.com/ltl-freight")]
+        public void Https_test_cases(string originalUrl, bool matchesCond, bool matchesRule, string expectedUrl)
+        {
+            //Arrange
+            var samples = new RandomSampleValues();
+            var factory = new RewriteFactory(samples);
+            string[] lines =
+            {
+                @"# Force SSL for pages that request personally-identifiable information",
+                @"RewriteCond %{HTTPS} ^(?!on).*$",
+                @"RewriteCond %{SERVER_PORT} ^80$",
+                @"RewriteCond %{HTTP:Host} (.*)",
+                @"RewriteRule ^(/ltl-freight)(.*)$ https\://%1$1 [NC,R=301]",
+            };
+            var lineNum = 1;
+            var redirects = lines.Select(l => factory.Build(lineNum++, l));
+            var ruleSet = RewriteRuleSet.BuildRuleSets(redirects);
+            var redirectData = new RedirectData(originalUrl);
+
+            TestConditions(matchesCond, matchesRule, 1, expectedUrl, ruleSet, redirectData);
         }
     }
 }
