@@ -47,7 +47,28 @@ namespace RewriteExploratoryUnitTester.Containers
             set { _processedUrl = value; }
         }
 
+        internal string CurrentPathAndQuery
+        {
+            get
+            {
+                if (_processedUrl != null)
+                {
+                    return new Uri(ProcessedUrl).PathAndQuery;
+                }
+                return OriginalUrl.PathAndQuery;
+            }
+        }
+
+        public void SetUrlChanged()
+        {
+            WasRedirected = true;
+        }
+
+        /// <summary>
+        /// Denotes the status of the LATEST RULE PROCESSED AGAINST THIS DATA
+        /// </summary>
         public RedirectStatus Status { get; set; }
+        public bool WasRedirected { get; private set; }
 
         //TODO this goes in a RuleSetMatchData ?
         public List<string> ConditionMatchGroups { get; set; }

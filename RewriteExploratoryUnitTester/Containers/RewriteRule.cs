@@ -40,7 +40,8 @@ namespace RewriteExploratoryUnitTester.Containers
         public RedirectData ProcessRule(RedirectData data)
         {
             //TODO actually this is the OriginalString when condition checks that... or something
-            var m = Regex.Match(data.OriginalUrl.PathAndQuery, MatchPattern, Options_Regex());
+            //WTF am i saying above... i think i want ProcessedUrl since that will default back to Original if not changed (i.e. its "CurrentUrl")
+            var m = Regex.Match(data.CurrentPathAndQuery, MatchPattern, Options_Regex());
             if (m.Success)
             {
                 data.RuleMatchGroups = m.Groups.Cast<Group>()
@@ -51,22 +52,23 @@ namespace RewriteExploratoryUnitTester.Containers
                 if ((Options & RuleOptions.FINISHED) > 0
                     && data.OriginalUrl.OriginalString != data.ProcessedUrl)
                 {
-                    //TODO make a FinalStatus, or CurrentStatus? or just a boolean?
                     data.Status = RedirectStatus.Redirected;
+                    data.SetUrlChanged();
                 }
                 else if (data.OriginalUrl.OriginalString != data.ProcessedUrl)
                 {
                     data.Status = RedirectStatus.Modified;
+                    data.SetUrlChanged();
                 }
                 else
                 {
-                    //Is this CURRENT status?
+                    //Is this CURRENT status? - yes
                     data.Status = RedirectStatus.NotProcessed;
                 }
             }
             else
             {
-                //Is this CURRENT status?
+                //Is this CURRENT status? - yes
                 data.Status = RedirectStatus.NotProcessed;
             }
             return data;

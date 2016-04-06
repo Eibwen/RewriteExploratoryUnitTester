@@ -45,6 +45,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Processors\ListingIndexOldTests.cs" />
     <Compile Include="Processors\RewriteFactoryIntegrationTests.cs" />
     <Compile Include="Processors\RewriteFactoryTests.cs" />
     <Compile Include="Processors\RewriteTesterTests.cs" />
