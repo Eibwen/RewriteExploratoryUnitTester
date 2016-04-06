@@ -1,3 +1,5 @@
+[![Build status](https://ci.appveyor.com/api/projects/status/p9rh7rgias1xq52a?svg=true)](https://ci.appveyor.com/project/Eibwen/rewriteexploratoryunittester)
+
 RewriteExploratoryUnitTester
 ============================
 
