@@ -70,7 +70,7 @@ namespace RewriteExploratoryUnitTester.Containers
                     throw new Exception("Failed processing condition from line: " + c.LineNumber, ex);
                 }
             }
-            data.RuleSetMatched = this;
+            //data.RuleSetMatched = this;
             return true;
         }
 
@@ -84,9 +84,13 @@ namespace RewriteExploratoryUnitTester.Containers
                     switch (data.Status)
                     {
                         case RedirectStatus.NotProcessed:
-                        case RedirectStatus.Continue:
+                        //case RedirectStatus.Continue:
+                            continue;
+                        case RedirectStatus.Modified:
+                            data.RuleSetMatched = this;
                             continue;
                         case RedirectStatus.Redirected:
+                            data.RuleSetMatched = this;
                             break;
                         default:
                             throw new Exception("Unknown RedirectStatus... code needs to be updated: " + data.Status.ToString());

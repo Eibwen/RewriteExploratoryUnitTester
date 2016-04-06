@@ -25,7 +25,7 @@ namespace RewriteExploratoryUnitTester.HelperClasses
             RulesSets = RewriteRuleSet.BuildRuleSets(conf).ToList();
         }
 
-        public RedirectData TestUrl(string url, bool outputAllMatching = false)
+        public RedirectData TestUrl(string url)
         {
             if (RulesSets == null) throw new Exception("Did you forget to call LoadConfig?");
 
@@ -36,10 +36,30 @@ namespace RewriteExploratoryUnitTester.HelperClasses
             foreach (var rule in matchesRuleSets)
             {
                 data = rule.ProcessRules(data);
-                if (!outputAllMatching && data.Status == RedirectStatus.Redirected)
+                if (data.Status == RedirectStatus.Redirected)
                     break;
             }
             return data;
+        }
+
+        public RedirectDataCollection TestUrlGetAllMatches(string url)
+        {
+            if (RulesSets == null) throw new Exception("Did you forget to call LoadConfig?");
+
+
+            var dataCollection = new RedirectDataCollection(url);
+            RedirectData data = dataCollection;
+            var matchesRuleSets = RulesSets.Where(r => r.ProcessConditions(ref data));
+
+            foreach (var rule in matchesRuleSets)
+            {
+                data = rule.ProcessRules(data);
+                if (data.Status == RedirectStatus.Redirected || data.Status == RedirectStatus.Modified)
+                {
+                    dataCollection.AddRuleSet(rule);
+                }
+            }
+            return dataCollection;
         }
     }
 }

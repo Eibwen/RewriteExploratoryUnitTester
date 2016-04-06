@@ -41,6 +41,7 @@
   <ItemGroup>
     <Compile Include="Containers\IRedirectLine.cs" />
     <Compile Include="Containers\RedirectData.cs" />
+    <Compile Include="Containers\RedirectDataCollection.cs" />
     <Compile Include="Containers\RewriteCondition.cs" />
     <Compile Include="Containers\RewriteRule.cs" />
     <Compile Include="Containers\RewriteRuleSet.cs" />

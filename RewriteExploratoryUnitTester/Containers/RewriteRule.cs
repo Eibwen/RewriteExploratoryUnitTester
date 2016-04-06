@@ -51,8 +51,23 @@ namespace RewriteExploratoryUnitTester.Containers
                 if ((Options & RuleOptions.FINISHED) > 0
                     && data.OriginalUrl.OriginalString != data.ProcessedUrl)
                 {
+                    //TODO make a FinalStatus, or CurrentStatus? or just a boolean?
                     data.Status = RedirectStatus.Redirected;
                 }
+                else if (data.OriginalUrl.OriginalString != data.ProcessedUrl)
+                {
+                    data.Status = RedirectStatus.Modified;
+                }
+                else
+                {
+                    //Is this CURRENT status?
+                    data.Status = RedirectStatus.NotProcessed;
+                }
+            }
+            else
+            {
+                //Is this CURRENT status?
+                data.Status = RedirectStatus.NotProcessed;
             }
             return data;
         }
